@@ -531,8 +531,13 @@ load();showPage('home',false);setupNavigation();
 // The service worker is optional: the travel data remains in this browser's
 // local storage, so a registration issue can never prevent the app from opening.
 if('serviceWorker' in navigator){
+  let reloadedForWorker=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(!reloadedForWorker){reloadedForWorker=true;window.location.reload()}
+  });
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('/yunastravel/service-worker.js',{scope:'/yunastravel/'})
+      .then(registration=>registration.update())
       .catch(error=>console.warn('Service worker registration failed:',error));
   });
 }

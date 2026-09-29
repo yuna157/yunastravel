@@ -1,10 +1,9 @@
-// Network-first cache: a normal online visit always checks GitHub Pages for a
-// newer app version. The cache is used only when the network is unavailable.
-const CACHE_NAME = 'yunas-travel-shell-v1';
+// Never cache the HTML shell. This ensures an installed app receives the same
+// current version as a Chrome tab, while the small static assets remain usable
+// if a network request briefly fails.
+const CACHE_NAME = 'yunas-travel-shell-v2';
 const APP_SCOPE = '/yunastravel/';
 const APP_ASSETS = [
-  APP_SCOPE,
-  `${APP_SCOPE}index.html`,
   `${APP_SCOPE}manifest.webmanifest`,
   `${APP_SCOPE}icons/icon-192.png`,
   `${APP_SCOPE}icons/icon-512.png`
@@ -36,6 +35,13 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if(url.origin !== self.location.origin || !url.pathname.startsWith(APP_SCOPE)) return;
 
+  // The application document must always come from the network. Serving a
+  // cached index.html here can leave an installed PWA behind the web version.
+  if(request.mode === 'navigate') {
+    event.respondWith(fetch(request));
+    return;
+  }
+
   event.respondWith(
     fetch(request)
       .then(response => {
@@ -47,7 +53,6 @@ self.addEventListener('fetch', event => {
       })
       .catch(() => caches.match(request).then(cached => {
         if(cached) return cached;
-        if(request.mode === 'navigate') return caches.match(`${self.location.origin}${APP_SCOPE}`);
         return Response.error();
       }))
   );
