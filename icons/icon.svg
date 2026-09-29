@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">YUNA'S TRAVEL app icon</title>
+  <desc id="desc">A blue travel suitcase with a cream airplane</desc>
+  <rect width="512" height="512" rx="108" fill="#7898ad"/>
+  <circle cx="256" cy="256" r="184" fill="#edf5f9"/>
+  <path d="M185 190h142c21 0 38 17 38 38v107c0 21-17 38-38 38H185c-21 0-38-17-38-38V228c0-21 17-38 38-38Z" fill="#7898ad"/>
+  <path d="M211 190v-16c0-16 13-29 29-29h32c16 0 29 13 29 29v16" fill="none" stroke="#7898ad" stroke-linecap="round" stroke-width="24"/>
+  <path d="M147 260h218" fill="none" stroke="#d6e5eb" stroke-width="16"/>
+  <path d="m202 303 108-54-37 54 37 54-108-54Z" fill="#fffdf5"/>
+  <path d="M232 289h56M232 317h56" stroke="#7898ad" stroke-linecap="round" stroke-width="9"/>
+</svg>
