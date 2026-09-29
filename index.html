@@ -67,6 +67,11 @@ main{padding:8px 20px 105px}
 
 .edit-icon,.trash-icon{color:#2f3337}.edit-icon svg,.trash-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 </style>
+<style>
+/* 순서 변경 버튼은 보이지 않게 유지하고, 일정 항목을 길게 눌러 이동한다. */
+.timeline-item{cursor:grab;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.timeline-item.dragging{cursor:grabbing}
+</style>
 </head>
 <body>
 <div class="app"><header><div class="brand">YUNA'S TRAVEL</div></header><main id="main"></main><nav class="bottom"><button class="nav" data-page="home" onclick="showPage('home')"><span>✈</span>여행</button><button class="nav" data-page="cities" onclick="showPage('cities')"><span>◎</span>도시</button><button class="nav" data-page="check" onclick="showPage('check')"><span>✓</span>체크리스트</button></nav></div>
@@ -368,7 +373,41 @@ function dragLeave(e){e.currentTarget.classList.remove('drag-over')}
 function dragEnd(e){e.currentTarget.classList.remove('dragging');document.querySelectorAll('.drag-over').forEach(x=>x.classList.remove('drag-over'));state.drag=null}
 function dropItem(e){e.preventDefault();const target=e.currentTarget,from=state.drag;if(!from||from.day!==+target.dataset.day)return;reorder(from.day,from.id,target.dataset.place)}
 function reorder(day,fromId,toId){if(fromId===toId)return;const a=currentTrip().days[day].items,from=a.indexOf(fromId),to=a.indexOf(toId);if(from<0||to<0)return;a.splice(from,1);a.splice(to,0,fromId);save();renderTrip()}
-function bindTouchDrag(){document.querySelectorAll('.drag-handle').forEach(handle=>handle.addEventListener('pointerdown',e=>{const item=e.target.closest('.timeline-item');if(!item)return;const day=+item.dataset.day,id=item.dataset.place;const end=up=>{document.removeEventListener('pointerup',end);const el=document.elementFromPoint(up.clientX,up.clientY)?.closest('.timeline-item');if(el&&+el.dataset.day===day)reorder(day,id,el.dataset.place)};document.addEventListener('pointerup',end,{once:true})}))}
+function bindTouchDrag(){
+  const holdDelay=350,interactive='button,a,input,textarea,select,label';
+  document.querySelectorAll('.timeline-item').forEach(item=>{
+    let holdTimer=null,active=false,source=null;
+    const clear=()=>{if(holdTimer){clearTimeout(holdTimer);holdTimer=null}item.classList.remove('dragging');document.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'))};
+    const targetAt=event=>document.elementFromPoint(event.clientX,event.clientY)?.closest('.timeline-item');
+    item.addEventListener('pointerdown',event=>{
+      if((event.button!==undefined&&event.button!==0)||event.target.closest(interactive))return;
+      source={day:+item.dataset.day,id:item.dataset.place,pointerId:event.pointerId};
+      holdTimer=setTimeout(()=>{
+        if(!source)return;
+        active=true;item.classList.add('dragging');
+        try{item.setPointerCapture?.(source.pointerId)}catch(_){}
+        navigator.vibrate?.(10);
+      },holdDelay);
+    });
+    item.addEventListener('pointermove',event=>{
+      if(!active||event.pointerId!==source?.pointerId)return;
+      event.preventDefault();
+      const target=targetAt(event);
+      document.querySelectorAll('.drag-over').forEach(el=>el.classList.remove('drag-over'));
+      if(target&&+target.dataset.day===source.day&&target.dataset.place!==source.id)target.classList.add('drag-over');
+    });
+    const finish=event=>{
+      if(event.pointerId!==source?.pointerId)return;
+      const dragged=source,target=active?targetAt(event):null,shouldReorder=active&&target&&+target.dataset.day===source.day;
+      clear();active=false;source=null;
+      if(shouldReorder)reorder(dragged.day,dragged.id,target.dataset.place);
+    };
+    item.addEventListener('pointerup',finish);
+    const cancel=()=>{clear();active=false;source=null};
+    item.addEventListener('pointercancel',cancel);
+    item.addEventListener('lostpointercapture',cancel);
+  });
+}
 function completeTrip(){const t=currentTrip();if(t.completed)return;t.completed=true;if(!state.data.cities.visited.some(c=>c.name===t.city))state.data.cities.visited.push({id:uid('city'),name:t.city,flag:flagForCity(t.city)});state.data.cities.want=state.data.cities.want.filter(c=>c.name!==t.city);save();showPage('home')}
 function renderCities(){
   const group=(type,title)=>{
