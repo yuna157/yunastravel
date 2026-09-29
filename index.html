@@ -386,6 +386,7 @@ function bindTouchDrag(){
         if(!source)return;
         active=true;item.classList.add('dragging');
         if(source.kind==='pointer')try{item.setPointerCapture?.(source.inputId)}catch(_){}
+        window.getSelection?.().removeAllRanges();
         navigator.vibrate?.(10);
       },holdDelay);
     };
@@ -412,6 +413,8 @@ function bindTouchDrag(){
     item.addEventListener('touchmove',event=>{const touch=[...event.touches].find(x=>x.identifier===source?.inputId);if(touch)move('touch',touch.identifier,touch.clientX,touch.clientY,event)},{passive:false});
     item.addEventListener('touchend',event=>{const touch=[...event.changedTouches].find(x=>x.identifier===source?.inputId);if(touch)finish('touch',touch.identifier,touch.clientX,touch.clientY)});
     item.addEventListener('touchcancel',event=>{const touch=[...event.changedTouches].find(x=>x.identifier===source?.inputId);if(touch)cancel('touch',touch.identifier)});
+    item.addEventListener('selectstart',event=>event.preventDefault());
+    item.addEventListener('contextmenu',event=>event.preventDefault());
   });
 }
 function completeTrip(){const t=currentTrip();if(t.completed)return;t.completed=true;if(!state.data.cities.visited.some(c=>c.name===t.city))state.data.cities.visited.push({id:uid('city'),name:t.city,flag:flagForCity(t.city)});state.data.cities.want=state.data.cities.want.filter(c=>c.name!==t.city);save();showPage('home')}
