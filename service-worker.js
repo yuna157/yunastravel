@@ -1,8 +1,9 @@
 // PWA app shell cache. This never modifies localStorage or IndexedDB.
-const CACHE_NAME = 'yunas-travel-shell-v3';
+const CACHE_NAME = 'yunas-travel-shell-v4';
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./travel-splash.webp",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png"
