@@ -5,7 +5,7 @@ const APP_SHELL = [
   "./index.html",
   "./manifest.webmanifest",
   "./icons/dot-icon.svg"
-];;
+];
 
 self.addEventListener('install', event => {
   event.waitUntil(
