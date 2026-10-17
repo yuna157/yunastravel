@@ -7,20 +7,17 @@
   "start_url": "/yunastravel/?source=pwa",
   "scope": "/yunastravel/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
-  "theme_color": "#7898ad",
-  "background_color": "#fbfaf7",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
+  "theme_color": "#fffbf2",
+  "background_color": "#fffbf2",
   "icons": [
     {
-      "src": "/yunastravel/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/yunastravel/icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "./icons/dot-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ]
