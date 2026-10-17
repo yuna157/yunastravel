@@ -1,13 +1,11 @@
 // PWA app shell cache. This never modifies localStorage or IndexedDB.
-const CACHE_NAME = 'yunas-travel-shell-v4';
+const CACHE_NAME = 'yunas-travel-shell-v5';
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./travel-splash.webp",
   "./manifest.webmanifest",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png"
-];
+  "./icons/dot-icon.svg"
+];;
 
 self.addEventListener('install', event => {
   event.waitUntil(
